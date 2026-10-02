@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Ferry configuration",
+  "type": "object",
+  "properties": {
+    "defaultServer": { "type": "string", "description": "Name of the server used for compare, upload and download." },
+    "uploadOnSave": { "type": "boolean", "default": false, "description": "Upload files to the default server when they are saved." },
+    "servers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "host", "username", "remotePath"],
+        "properties": {
+          "name": { "type": "string", "description": "Unique display name." },
+          "host": { "type": "string" },
+          "port": { "type": "number", "default": 22 },
+          "username": { "type": "string" },
+          "password": { "type": "string", "description": "Not recommended. Leave empty to be prompted; the password is then kept in VS Code's secret storage." },
+          "auth": { "enum": ["password", "key", "agent"], "description": "Authentication method. With \"key\", the key file is looked up per computer (saved in VS Code on each machine), then privateKeyPath, then ~/.ssh/id_ed25519, id_ecdsa, id_rsa." },
+          "privateKeyPath": { "type": "string", "description": "Optional fallback path to a private key, e.g. ~/.ssh/id_ed25519. The server form keeps the path per computer instead, so it is not synced with the project." },
+          "passphrase": { "type": "string", "description": "Passphrase of the private key. Leave empty to be prompted." },
+          "agent": { "type": ["boolean", "string"], "description": "true to use the SSH agent (SSH_AUTH_SOCK, or the Windows OpenSSH agent pipe), or an explicit socket path / 'pageant'." },
+          "remotePath": { "type": "string", "description": "Absolute remote directory mapped to the local root." },
+          "localPath": { "type": "string", "default": "", "description": "Local directory, relative to the workspace folder, mapped to remotePath." },
+          "ignore": { "type": "array", "items": { "type": "string" }, "description": "Extra ignore patterns (gitignore syntax) for this server only." }
+        }
+      }
+    }
+  }
+}

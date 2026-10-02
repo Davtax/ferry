@@ -1,0 +1,11 @@
+.vscode/**
+src/**
+**/*.map
+**/*.ts
+tsconfig.json
+.gitignore
+test/**
+test-data/**
+images/**
+!images/icon.png
+*.vsix

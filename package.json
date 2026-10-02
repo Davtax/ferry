@@ -1,0 +1,901 @@
+{
+  "name": "ferry",
+  "displayName": "Ferry – SFTP Sync & Deploy",
+  "description": "PyCharm-style deployment for VS Code: compare local and remote files over SFTP, review diffs, choose the sync direction per file, and upload on save.",
+  "version": "0.1.0",
+  "publisher": "davtax",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davtax/ferry.git"
+  },
+  "homepage": "https://github.com/davtax/ferry#readme",
+  "bugs": {
+    "url": "https://github.com/davtax/ferry/issues"
+  },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#123B7A",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sftp",
+    "ssh",
+    "deployment",
+    "sync",
+    "upload"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:.vscode/ferry.json"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ferry",
+          "title": "Ferry",
+          "icon": "resources/ferry-boat.svg"
+        }
+      ]
+    },
+    "views": {
+      "ferry": [
+        {
+          "id": "ferry.sync",
+          "name": "Sync Changes"
+        },
+        {
+          "id": "ferry.remote",
+          "name": "Remote Host"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "ferry.sync",
+        "contents": "No server configured yet.\n[Add SFTP Server](command:ferry.addServer)\n[Open Configuration](command:ferry.editConfig)",
+        "when": "!ferry.hasServer"
+      },
+      {
+        "view": "ferry.sync",
+        "contents": "Compare your local files with the server to see what differs.\n[Compare with Server](command:ferry.compare)",
+        "when": "ferry.hasServer"
+      },
+      {
+        "view": "ferry.remote",
+        "contents": "Configure a server to browse its files.\n[Add SFTP Server](command:ferry.addServer)",
+        "when": "!ferry.hasServer"
+      }
+    ],
+    "commands": [
+      {
+        "command": "ferry.selectServer",
+        "title": "Select Default Server",
+        "category": "Ferry",
+        "icon": "$(server)"
+      },
+      {
+        "command": "ferry.addServer",
+        "title": "Add SFTP Server",
+        "category": "Ferry",
+        "icon": "$(add)"
+      },
+      {
+        "command": "ferry.editServer",
+        "title": "Edit Server…",
+        "category": "Ferry",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "ferry.renameServer",
+        "title": "Rename Server",
+        "category": "Ferry",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "ferry.editConfig",
+        "title": "Open Configuration",
+        "category": "Ferry",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "ferry.testConnection",
+        "title": "Test Connection",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.forgetPassword",
+        "title": "Forget Stored Password",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.toggleUploadOnSave",
+        "title": "Toggle Upload on Save",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.menu",
+        "title": "Show Menu",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.showLog",
+        "title": "Show Log",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.compare",
+        "title": "Compare with Server",
+        "category": "Ferry",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "ferry.applySync",
+        "title": "Apply Sync (run all transfers)",
+        "category": "Ferry",
+        "icon": "$(check-all)"
+      },
+      {
+        "command": "ferry.syncNow",
+        "title": "Sync Now",
+        "category": "Ferry",
+        "icon": "$(play)"
+      },
+      {
+        "command": "ferry.clearSync",
+        "title": "Clear List",
+        "category": "Ferry",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "ferry.showDiff",
+        "title": "Show Diff",
+        "category": "Ferry",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "ferry.setUpload",
+        "title": "Set Direction: Upload (Local → Remote)",
+        "category": "Ferry",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "ferry.setDownload",
+        "title": "Set Direction: Download (Remote → Local)",
+        "category": "Ferry",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "ferry.setSkip",
+        "title": "Set Direction: Skip",
+        "category": "Ferry",
+        "icon": "$(circle-slash)"
+      },
+      {
+        "command": "ferry.setDeleteRemote",
+        "title": "Set Direction: Delete on Remote",
+        "category": "Ferry",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "ferry.setDeleteLocal",
+        "title": "Set Direction: Delete Locally",
+        "category": "Ferry",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "ferry.setAllUpload",
+        "title": "Set All to Upload",
+        "category": "Ferry",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "ferry.setAllDownload",
+        "title": "Set All to Download",
+        "category": "Ferry",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "ferry.setAllSkip",
+        "title": "Set All to Skip",
+        "category": "Ferry",
+        "icon": "$(circle-slash)"
+      },
+      {
+        "command": "ferry.resetActions",
+        "title": "Reset to Suggested Actions",
+        "category": "Ferry",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "ferry.uploadFile",
+        "title": "Upload to Server",
+        "category": "Ferry",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "ferry.downloadFile",
+        "title": "Download from Server",
+        "category": "Ferry",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "ferry.compareFile",
+        "title": "Compare with Deployed Version",
+        "category": "Ferry",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "ferry.exclude",
+        "title": "Exclude from Sync",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.editIgnore",
+        "title": "Edit Ignore Patterns (.ferryignore)",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.manageIgnore",
+        "title": "Manage Ignore Patterns",
+        "category": "Ferry",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "ferry.remote.refresh",
+        "title": "Refresh",
+        "category": "Ferry",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "ferry.remote.open",
+        "title": "Open Remote File",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.remote.download",
+        "title": "Download",
+        "category": "Ferry",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "ferry.remote.compare",
+        "title": "Compare with Local",
+        "category": "Ferry",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "ferry.remote.rename",
+        "title": "Rename…",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.remote.delete",
+        "title": "Delete",
+        "category": "Ferry",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "ferry.remote.newFolder",
+        "title": "New Folder…",
+        "category": "Ferry",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "ferry.remote.newFile",
+        "title": "New File…",
+        "category": "Ferry",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "ferry.remote.uploadHere",
+        "title": "Upload Files Here…",
+        "category": "Ferry",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "ferry.remote.copyPath",
+        "title": "Copy Remote Path",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.remote.revealLocal",
+        "title": "Reveal Local Counterpart",
+        "category": "Ferry"
+      },
+      {
+        "command": "ferry.remote.goUp",
+        "title": "Go Up",
+        "category": "Ferry",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "ferry.remote.goTo",
+        "title": "Go to Folder…",
+        "category": "Ferry",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "ferry.remote.goHome",
+        "title": "Go to Home Directory",
+        "category": "Ferry",
+        "icon": "$(home)"
+      },
+      {
+        "command": "ferry.remote.goProject",
+        "title": "Back to Project Folder",
+        "category": "Ferry",
+        "icon": "$(root-folder)"
+      },
+      {
+        "command": "ferry.remote.browseHere",
+        "title": "Browse From Here",
+        "category": "Ferry",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "ferry.remote.saveAs",
+        "title": "Download To…",
+        "category": "Ferry",
+        "icon": "$(cloud-download)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "ferry.compare",
+          "when": "view == ferry.sync",
+          "group": "navigation@1"
+        },
+        {
+          "command": "ferry.applySync",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "navigation@2"
+        },
+        {
+          "command": "ferry.manageIgnore",
+          "when": "view == ferry.sync",
+          "group": "navigation@3"
+        },
+        {
+          "command": "ferry.selectServer",
+          "when": "view == ferry.sync",
+          "group": "navigation@4"
+        },
+        {
+          "command": "ferry.setAllUpload",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "1_bulk@1"
+        },
+        {
+          "command": "ferry.setAllDownload",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "1_bulk@2"
+        },
+        {
+          "command": "ferry.setAllSkip",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "1_bulk@3"
+        },
+        {
+          "command": "ferry.resetActions",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "1_bulk@4"
+        },
+        {
+          "command": "ferry.clearSync",
+          "when": "view == ferry.sync && ferry.hasEntries",
+          "group": "2_misc@1"
+        },
+        {
+          "command": "ferry.toggleUploadOnSave",
+          "when": "view == ferry.sync",
+          "group": "2_misc@2"
+        },
+        {
+          "command": "ferry.addServer",
+          "when": "view == ferry.sync",
+          "group": "3_config@1"
+        },
+        {
+          "command": "ferry.editServer",
+          "when": "view == ferry.sync && ferry.hasServer",
+          "group": "3_config@1"
+        },
+        {
+          "command": "ferry.renameServer",
+          "when": "view == ferry.sync && ferry.hasServer",
+          "group": "3_config@1"
+        },
+        {
+          "command": "ferry.editConfig",
+          "when": "view == ferry.sync",
+          "group": "3_config@2"
+        },
+        {
+          "command": "ferry.editIgnore",
+          "when": "view == ferry.sync",
+          "group": "3_config@3"
+        },
+        {
+          "command": "ferry.remote.goTo",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "navigation@2"
+        },
+        {
+          "command": "ferry.remote.goProject",
+          "when": "view == ferry.remote && ferry.remoteOutsideProject",
+          "group": "navigation@3"
+        },
+        {
+          "command": "ferry.remote.refresh",
+          "when": "view == ferry.remote",
+          "group": "navigation@4"
+        },
+        {
+          "command": "ferry.remote.goHome",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "1_nav@1"
+        },
+        {
+          "command": "ferry.remote.goProject",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "1_nav@2"
+        },
+        {
+          "command": "ferry.remote.newFile",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "2_new@1"
+        },
+        {
+          "command": "ferry.remote.newFolder",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "2_new@2"
+        },
+        {
+          "command": "ferry.remote.uploadHere",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "2_new@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "ferry.setUpload",
+          "when": "view == ferry.sync && viewItem =~ /^entry-(modified|conflict|localOnly)$/",
+          "group": "inline@2"
+        },
+        {
+          "command": "ferry.setDownload",
+          "when": "view == ferry.sync && viewItem =~ /^entry-(modified|conflict|remoteOnly)$/",
+          "group": "inline@3"
+        },
+        {
+          "command": "ferry.setSkip",
+          "when": "view == ferry.sync && viewItem =~ /^entry-/",
+          "group": "inline@4"
+        },
+        {
+          "command": "ferry.setDeleteRemote",
+          "when": "view == ferry.sync && viewItem == entry-remoteOnly",
+          "group": "inline@5"
+        },
+        {
+          "command": "ferry.setDeleteLocal",
+          "when": "view == ferry.sync && viewItem == entry-localOnly",
+          "group": "inline@5"
+        },
+        {
+          "command": "ferry.syncNow",
+          "when": "view == ferry.sync && viewItem =~ /^entry-/",
+          "group": "inline@6"
+        },
+        {
+          "command": "ferry.setUpload",
+          "when": "view == ferry.sync && viewItem =~ /^group-(modified|conflict|localOnly)$/",
+          "group": "inline@1"
+        },
+        {
+          "command": "ferry.setDownload",
+          "when": "view == ferry.sync && viewItem =~ /^group-(modified|conflict|remoteOnly)$/",
+          "group": "inline@2"
+        },
+        {
+          "command": "ferry.setSkip",
+          "when": "view == ferry.sync && viewItem =~ /^group-/",
+          "group": "inline@3"
+        },
+        {
+          "command": "ferry.setDeleteRemote",
+          "when": "view == ferry.sync && viewItem == group-remoteOnly",
+          "group": "inline@4"
+        },
+        {
+          "command": "ferry.setDeleteLocal",
+          "when": "view == ferry.sync && viewItem == group-localOnly",
+          "group": "inline@4"
+        },
+        {
+          "command": "ferry.syncNow",
+          "when": "view == ferry.sync && viewItem =~ /^group-/",
+          "group": "inline@5"
+        },
+        {
+          "command": "ferry.showDiff",
+          "when": "view == ferry.sync && viewItem =~ /^entry-/",
+          "group": "1_main@1"
+        },
+        {
+          "command": "ferry.syncNow",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-/",
+          "group": "1_main@2"
+        },
+        {
+          "command": "ferry.setUpload",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-(modified|conflict|localOnly)$/",
+          "group": "2_action@1"
+        },
+        {
+          "command": "ferry.setDownload",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-(modified|conflict|remoteOnly)$/",
+          "group": "2_action@2"
+        },
+        {
+          "command": "ferry.setSkip",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-/",
+          "group": "2_action@3"
+        },
+        {
+          "command": "ferry.setDeleteRemote",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-remoteOnly$/",
+          "group": "2_action@4"
+        },
+        {
+          "command": "ferry.setDeleteLocal",
+          "when": "view == ferry.sync && viewItem =~ /^(entry|group)-localOnly$/",
+          "group": "2_action@5"
+        },
+        {
+          "command": "ferry.exclude",
+          "when": "view == ferry.sync && viewItem =~ /^entry-/",
+          "group": "3_ignore@1"
+        },
+        {
+          "command": "ferry.remote.download",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)$/",
+          "group": "inline@1"
+        },
+        {
+          "command": "ferry.remote.compare",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)$/",
+          "group": "inline@2"
+        },
+        {
+          "command": "ferry.remote.saveAs",
+          "when": "view == ferry.remote && viewItem == remoteFile.ext",
+          "group": "inline@1"
+        },
+        {
+          "command": "ferry.remote.browseHere",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "0_nav@1"
+        },
+        {
+          "command": "ferry.remote.download",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)$/",
+          "group": "1_main@1"
+        },
+        {
+          "command": "ferry.remote.saveAs",
+          "when": "view == ferry.remote && viewItem =~ /^remoteFile/",
+          "group": "1_main@2"
+        },
+        {
+          "command": "ferry.remote.compare",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)$/",
+          "group": "1_main@3"
+        },
+        {
+          "command": "ferry.remote.revealLocal",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)$/",
+          "group": "1_main@4"
+        },
+        {
+          "command": "ferry.remote.newFile",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "2_new@1"
+        },
+        {
+          "command": "ferry.remote.newFolder",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "2_new@2"
+        },
+        {
+          "command": "ferry.remote.uploadHere",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "2_new@3"
+        },
+        {
+          "command": "ferry.remote.copyPath",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)/",
+          "group": "3_path@1"
+        },
+        {
+          "command": "ferry.remote.refresh",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "3_path@2"
+        },
+        {
+          "command": "ferry.remote.rename",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)/",
+          "group": "7_modify@1"
+        },
+        {
+          "command": "ferry.remote.delete",
+          "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)/",
+          "group": "7_modify@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "ferry.uploadFile",
+          "when": "ferry.hasServer",
+          "group": "ferry@1"
+        },
+        {
+          "command": "ferry.downloadFile",
+          "when": "ferry.hasServer",
+          "group": "ferry@2"
+        },
+        {
+          "command": "ferry.compare",
+          "when": "ferry.hasServer && explorerResourceIsFolder",
+          "group": "ferry@3"
+        },
+        {
+          "command": "ferry.compareFile",
+          "when": "ferry.hasServer && !explorerResourceIsFolder",
+          "group": "ferry@3"
+        },
+        {
+          "command": "ferry.exclude",
+          "when": "ferry.hasServer",
+          "group": "ferry@4"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "ferry.uploadFile",
+          "when": "ferry.hasServer && resourceScheme == file",
+          "group": "ferry@1"
+        },
+        {
+          "command": "ferry.downloadFile",
+          "when": "ferry.hasServer && resourceScheme == file",
+          "group": "ferry@2"
+        },
+        {
+          "command": "ferry.compareFile",
+          "when": "ferry.hasServer && resourceScheme == file",
+          "group": "ferry@3"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "ferry.uploadFile",
+          "when": "ferry.hasServer && isInDiffEditor && resourceScheme == file && ferry.diffOpen",
+          "group": "navigation@1"
+        },
+        {
+          "command": "ferry.downloadFile",
+          "when": "ferry.hasServer && isInDiffEditor && resourceScheme == file && ferry.diffOpen",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "ferry.showDiff",
+          "when": "false"
+        },
+        {
+          "command": "ferry.setUpload",
+          "when": "false"
+        },
+        {
+          "command": "ferry.setDownload",
+          "when": "false"
+        },
+        {
+          "command": "ferry.setSkip",
+          "when": "false"
+        },
+        {
+          "command": "ferry.setDeleteRemote",
+          "when": "false"
+        },
+        {
+          "command": "ferry.setDeleteLocal",
+          "when": "false"
+        },
+        {
+          "command": "ferry.syncNow",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.open",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.download",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.compare",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.rename",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.delete",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.revealLocal",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.browseHere",
+          "when": "false"
+        },
+        {
+          "command": "ferry.remote.saveAs",
+          "when": "false"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "ferry.remote.rename",
+        "key": "f2",
+        "when": "focusedView == ferry.remote"
+      },
+      {
+        "command": "ferry.remote.delete",
+        "key": "delete",
+        "mac": "cmd+backspace",
+        "when": "focusedView == ferry.remote"
+      },
+      {
+        "command": "ferry.remote.goUp",
+        "key": "alt+up",
+        "when": "focusedView == ferry.remote"
+      }
+    ],
+    "configuration": {
+      "title": "Ferry",
+      "properties": {
+        "ferry.defaultIgnore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".git/",
+            ".vscode/",
+            ".ferryignore",
+            "*.ferry-part",
+            ".idea/",
+            "node_modules/",
+            "__pycache__/",
+            "*.pyc",
+            ".venv/",
+            "venv/",
+            ".DS_Store",
+            "Thumbs.db"
+          ],
+          "markdownDescription": "Ignore patterns (gitignore syntax) applied to every server, in addition to `.ferryignore` and the server's own `ignore` list."
+        },
+        "ferry.respectGitignore": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also skip files matched by the .gitignore at the root of the local mapping."
+        },
+        "ferry.compareMode": {
+          "type": "string",
+          "enum": [
+            "content",
+            "size"
+          ],
+          "enumDescriptions": [
+            "Files of equal size are downloaded and compared byte by byte (accurate).",
+            "Files of equal size are treated as identical (fast, may miss changes)."
+          ],
+          "default": "content",
+          "description": "How files are compared when there is no record of a previous sync."
+        },
+        "ferry.ignoreLineEndings": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Treat files that differ only in line endings (Windows `CRLF` vs Unix `LF`) as identical when comparing. Files are still transferred byte for byte."
+        },
+        "ferry.ignoreWhitespace": {
+          "type": "string",
+          "enum": [
+            "off",
+            "trailing",
+            "amount"
+          ],
+          "enumDescriptions": [
+            "Any whitespace difference counts.",
+            "Ignore spaces/tabs at the end of lines and blank lines at the end of the file.",
+            "Also ignore changes in the amount of whitespace, including indentation (careful with Python, YAML and Makefiles)."
+          ],
+          "default": "off",
+          "markdownDescription": "Treat text files whose only differences are whitespace as identical when comparing. Binary files are never affected. Files that differ in size are then downloaded to check (up to `#ferry.maxContentCompareSize#`)."
+        },
+        "ferry.maxContentCompareSize": {
+          "type": "number",
+          "default": 10485760,
+          "description": "Files larger than this many bytes are compared by size only."
+        },
+        "ferry.concurrency": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 16,
+          "description": "Number of parallel SFTP operations."
+        },
+        "ferry.uploadOnSaveCheckRemote": {
+          "type": "boolean",
+          "default": true,
+          "description": "Before uploading on save, warn when the remote file changed since the last sync."
+        }
+      }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": ".vscode/ferry.json",
+        "url": "./schemas/ferry.schema.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "ignore",
+        "filenames": [
+          ".ferryignore"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node test/integration.js",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "ignore": "^7.0.11",
+    "jsonc-parser": "^3.3.1",
+    "ssh2-sftp-client": "^12.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/ssh2-sftp-client": "^9.0.6",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^4.0.0",
+    "typescript": "^7.0.2"
+  }
+}

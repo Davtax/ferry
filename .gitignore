@@ -1,0 +1,9 @@
+node_modules/
+out/
+*.vsix
+test-data/
+
+# Personal deployment settings (server hosts, user names)
+.vscode/ferry.json
+.vscode/settings.json
+.ferryignore

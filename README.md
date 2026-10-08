@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=davtax.ferry"><img src="https://img.shields.io/visual-studio-marketplace/v/davtax.ferry?label=Marketplace&color=1A86D6" alt="Marketplace version"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=davtax.ferry"><img src="https://img.shields.io/visual-studio-marketplace/i/davtax.ferry?color=1A86D6" alt="Installs"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=davtax.ferry"><img src="https://vsmarketplacebadges.dev/version/davtax.ferry.svg?label=Marketplace&color=1A86D6" alt="Marketplace version"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=davtax.ferry"><img src="https://vsmarketplacebadges.dev/installs-short/davtax.ferry.svg?label=installs&color=1A86D6" alt="Installs"></a>
   <img src="https://img.shields.io/badge/license-MIT-FFB547" alt="MIT license">
 </p>
 
@@ -70,7 +70,7 @@ Ferry remembers the size and modification time of both sides at the last sync:
 - Browse the server and open remote files in a normal editor. Edit them and save (<kbd>Ctrl</kbd>+<kbd>S</kbd>, on macOS <kbd>⌘</kbd>+<kbd>S</kbd>) to write straight to the server. If the file changed on the server since you opened it, VS Code asks before overwriting.
 - Right-click to **Rename** (<kbd>F2</kbd>), **Delete** (<kbd>Del</kbd>, on macOS <kbd>⌘</kbd>+<kbd>⌫</kbd>; with confirmation, works on multi-selections), create a **New File / New Folder**, **Upload Files Here**, **Download**, **Compare with Local**, **Copy Remote Path** or **Reveal Local Counterpart**.
 - It starts in the project folder (marked **P**), but you can leave it: click the **..** row (or press <kbd>Alt</kbd>+<kbd>↑</kbd>, on macOS <kbd>⌥</kbd>+<kbd>↑</kbd>), **Go to Folder…** (absolute path or `~/…`), **Go to Home Directory**, or right-click a folder → **Browse From Here**. **Back to Project Folder** returns.
-- **Open SSH Terminal** (terminal button in the view title, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>`</kbd>, on macOS <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>`</kbd>) opens an integrated terminal on the server, already in the project folder. Right-click a folder to open it there instead. **Ferry: SSH to Server** is also listed in the terminal panel's **+** dropdown. It uses your system `ssh` client, so password prompts appear in the terminal.
+- **Open SSH Terminal** (terminal button in the view title, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>&#96;</kbd>, on macOS <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>&#96;</kbd>) opens an integrated terminal on the server, already in the project folder. Right-click a folder to open it there instead. **Ferry: SSH to Server** is also listed in the terminal panel's **+** dropdown. It uses your system `ssh` client, so password prompts appear in the terminal.
 - Outside the project, Compare and Download are hidden because those files have no local counterpart. Use **Download To…** to save one anywhere.
 
 Keyboard shortcuts in the Remote Host view:

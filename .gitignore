@@ -7,3 +7,4 @@ test-data/
 .vscode/ferry.json
 .vscode/settings.json
 .ferryignore
+.DS_Store

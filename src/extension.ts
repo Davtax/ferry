@@ -13,6 +13,7 @@ import { SyncAction, SyncEngine, SyncEntry } from './sync';
 import { ProfileStore } from './profiles';
 import { ServerForm } from './serverForm';
 import { SyncNode, SyncTreeProvider, isGroup } from './syncView';
+import { sshTerminalOptions } from './terminal';
 
 export function activate(context: vscode.ExtensionContext): void {
   const output = initLog();
@@ -316,6 +317,7 @@ export function activate(context: vscode.ExtensionContext): void {
       { label: '$(add) Add SFTP Server…', cmd: 'ferry.addServer' },
       { label: `$(cloud-upload) Upload on Save: ${config.uploadOnSave ? 'On' : 'Off'}`, description: 'toggle', cmd: 'ferry.toggleUploadOnSave' },
       { label: '$(eye-closed) Manage Ignore Patterns', cmd: 'ferry.manageIgnore' },
+      { label: '$(terminal) Open SSH Terminal', description: 'in the project folder', cmd: 'ferry.openTerminal' },
       { label: '$(plug) Test Connection', cmd: 'ferry.testConnection' },
       { label: '$(gear) Open Configuration', cmd: 'ferry.editConfig' },
       { label: '$(output) Show Log', cmd: 'ferry.showLog' },
@@ -993,6 +995,28 @@ export function activate(context: vscode.ExtensionContext): void {
     }
     remoteTree.refresh();
   });
+
+  /** SSH terminal in a Remote Host folder (or a file's folder), or in the project folder when invoked without one. */
+  register('ferry.openTerminal', async (node?: RemoteNode) => {
+    const { server, dir } = node ? remoteDirOf(node) : { server: await requireServer(), dir: undefined };
+    if (!server) return;
+    try {
+      const terminal = vscode.window.createTerminal(await sshTerminalOptions(server, conns, dir));
+      terminal.show();
+    } catch (err) {
+      reportError('cannot open a terminal', err);
+    }
+  });
+
+  context.subscriptions.push(vscode.window.registerTerminalProfileProvider('ferry.ssh', {
+    provideTerminalProfile: async () => {
+      const server = config.activeServer;
+      if (!server) {
+        throw new Error('Ferry: no SFTP server configured.');
+      }
+      return new vscode.TerminalProfile(await sshTerminalOptions(server, conns));
+    },
+  }));
 
   register('ferry.remote.copyPath', async (node?: RemoteNode, nodes?: RemoteNode[]) => {
     const paths = remoteTargets(node, nodes).map((t) => t.abs);

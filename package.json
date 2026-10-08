@@ -2,7 +2,7 @@
   "name": "ferry",
   "displayName": "Ferry – SFTP Sync & Deploy",
   "description": "PyCharm-style deployment for VS Code: compare local and remote files over SFTP, review diffs, choose the sync direction per file, and upload on save.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "davtax",
   "license": "MIT",
   "repository": {
@@ -33,7 +33,8 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
-    "workspaceContains:.vscode/ferry.json"
+    "workspaceContains:.vscode/ferry.json",
+    "onTerminalProfile:ferry.ssh"
   ],
   "contributes": {
     "viewsContainers": {
@@ -104,6 +105,12 @@
         "title": "Open Configuration",
         "category": "Ferry",
         "icon": "$(gear)"
+      },
+      {
+        "command": "ferry.openTerminal",
+        "title": "Open SSH Terminal",
+        "category": "Ferry",
+        "icon": "$(terminal)"
       },
       {
         "command": "ferry.testConnection",
@@ -435,6 +442,11 @@
           "group": "navigation@3"
         },
         {
+          "command": "ferry.openTerminal",
+          "when": "view == ferry.remote && ferry.hasServer",
+          "group": "navigation@1"
+        },
+        {
           "command": "ferry.remote.refresh",
           "when": "view == ferry.remote",
           "group": "navigation@4"
@@ -622,6 +634,11 @@
           "group": "2_new@3"
         },
         {
+          "command": "ferry.openTerminal",
+          "when": "view == ferry.remote && viewItem =~ /^remoteDir/",
+          "group": "3_path@0"
+        },
+        {
           "command": "ferry.remote.copyPath",
           "when": "view == ferry.remote && viewItem =~ /^remote(Dir|File)/",
           "group": "3_path@1"
@@ -781,6 +798,12 @@
         "command": "ferry.remote.goUp",
         "key": "alt+up",
         "when": "focusedView == ferry.remote"
+      },
+      {
+        "command": "ferry.openTerminal",
+        "key": "ctrl+alt+`",
+        "mac": "cmd+alt+`",
+        "when": "ferry.hasServer"
       }
     ],
     "configuration": {
@@ -877,7 +900,16 @@
           ".ferryignore"
         ]
       }
-    ]
+    ],
+    "terminal": {
+      "profiles": [
+        {
+          "id": "ferry.ssh",
+          "title": "Ferry: SSH to Server",
+          "icon": "server"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

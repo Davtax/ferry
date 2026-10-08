@@ -2,7 +2,7 @@
   "name": "ferry",
   "displayName": "Ferry – SFTP Sync & Deploy",
   "description": "PyCharm-style deployment for VS Code: compare local and remote files over SFTP, review diffs, choose the sync direction per file, and upload on save.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "davtax",
   "license": "MIT",
   "repository": {
